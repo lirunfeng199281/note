@@ -24,9 +24,11 @@
 
 5. pom多继承回来的<dependencyManagement>pom中 引入的<dependencies>是无效的
 
-6. pom被引用 此pom的父pom的<dependencyManagement>可用
+6. pom多继承回来的<dependencyManagement>pom中 <distributionManagement>和<repositories>是无效的
 
-7. pom被引用 此pom的子pom或者引用的pom的<dependencyManagement>不可用
+7. pom被引用 此pom的父pom的<dependencyManagement>可用
+
+8. pom被引用 此pom的子pom或者引用的pom的<dependencyManagement>不可用
 
 #### springboot插件
 
