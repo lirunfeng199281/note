@@ -1,0 +1,83 @@
+def co(event,branch) {
+    def map = [
+        module:'http://git.quanhoo.com/tools/queen-module.git',
+        common:'http://git.quanhoo.com/scm/queen-common.git',
+        component:'http://git.quanhoo.com/scm/queen-scm-component.git',
+
+        basicdata:'http://git.quanhoo.com/scm/queen-center-basicdata.git',
+        item:'http://git.quanhoo.com/scm/queen-center-item.git',
+        inventory:'http://git.quanhoo.com/scm/queen-center-inventory.git',
+        order:'http://git.quanhoo.com/scm/queen-center-order.git',
+
+        application:'http://git.quanhoo.com/scm/queen-scm-application.git',
+        schedule:'http://git.quanhoo.com/scm/queen-scm-schedule.git'
+    ]
+
+    dir(event) {
+        def git_url = map[event]
+        git branch: branch, credentialsId: '6a0eb46e-aac7-4193-bfc8-19a8fcfc0665', url: git_url
+    }
+}
+
+def mkakePom(event) {
+    def pomHead = '<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"><modelVersion>4.0.0</modelVersion><groupId>com.queen.scm</groupId><artifactId>ppppppp</artifactId><packaging>pom</packaging><version>1.0-SNAPSHOT</version><modules>'
+    def pomTail = '</modules></project>'
+    def centerList = ['basicdata','item','inventory','order']
+    def applicationList = ['application','schedule']
+    def commonList = ['module','common','component']
+    def moduleList = []
+
+    commonList.eachWithIndex{ it,i -> 
+        moduleList.add('<module>'+it+'</module>')
+    }
+    
+
+    centerList.eachWithIndex{ it,i -> 
+        if (it == event) {
+            moduleList.add('<module>'+it+'</module>')
+        }else {
+            moduleList.add('<module>'+it+'/queen-center-'+it+'-common</module>')
+            moduleList.add('<module>'+it+'/queen-center-'+it+'-api</module>')
+        }
+    }
+
+    applicationList.eachWithIndex{ it,i -> 
+        if (it == event) {
+            moduleList.add('<module>'+it+'</module>')
+        }
+    }
+
+    def pom = pomHead
+    moduleList.eachWithIndex{ it,i -> 
+        pom = pom + it
+    }
+    pom = pom + pomTail
+    return pom
+}
+
+def allList = ['basicdata','item','inventory','order','application','schedule','module','common','component']
+node {
+    stage('拉取代码') {
+    
+        allList.each{ ee,i -> 
+            co(ee,env.branch)
+        }
+    }
+    stage('生成Pom') {
+        def pom = mkakePom(env.event)
+        writeFile file: "pom.xml", text: pom
+    }
+    stage('打包') {
+        sh "mvn clean package -Dmaven.test.skip=true"
+    }
+    stage('发包') {
+        def jarMap = [basicdata:'basicdata-web',item:'item-web',inventory:'inventory-web',order:'order-web',application:'scm-web',schedule:'schedule-web']
+        def pathMap = [basicdata:'queen-center-basicdata-web',item:'queen-center-item-web',inventory:'queen-center-inventory-web',order:'queen-center-order-web',application:'queen-scm-application-web',schedule:'queen-scm-schedule-web']
+        withCredentials([usernamePassword(credentialsId: 'ee334e13-98a9-4a02-b281-e9e6d489d947', passwordVariable: 'password', usernameVariable: 'username')]) {
+            script{
+                sh "sshpass -p ${password} scp "+env.event+"/"+pathMap[env.event]+"/target/*.jar ${username}@192.168.1.101:/home/quan/oa_update/"+jarMap[env.event]+".jar" 
+                sh "ssh  ${username}@192.168.1.101 'sh /opt/apps/jar/update_oa.sh > /dev/null 2>&1 &'"
+            }
+        }
+    }
+}

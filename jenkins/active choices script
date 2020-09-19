@@ -1,0 +1,17 @@
+def map = [
+    module:'git.quanhoo.com/tools/queen-module.git',
+    common:'git.quanhoo.com/scm/queen-common.git',
+    component:'git.quanhoo.com/scm/queen-scm-component.git',
+
+    basicdata:'git.quanhoo.com/scm/queen-center-basicdata.git',
+    item:'git.quanhoo.com/scm/queen-center-item.git',
+    inventory:'git.quanhoo.com/scm/queen-center-inventory.git',
+    order:'git.quanhoo.com/scm/queen-center-order.git',
+
+    application:'git.quanhoo.com/scm/queen-scm-application.git',
+    schedule:'git.quanhoo.com/scm/queen-scm-schedule.git'
+]
+def gitAcount = "http://lirunfeng:lirunfeng1992@"
+def gitUrl = gitAcount + map[event]
+def gettags = ("git ls-remote -h " + gitUrl).execute()
+gettags.text.readLines().collect { it.split()[1].replaceAll('refs/heads/', '') }.unique()
