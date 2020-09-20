@@ -12,5 +12,10 @@
 6. 两个Advisor可以参考下TransactionAttributeSourceAdvisor和DynamicDataSourceAnnotationAdvisor
 7. Advisor主要两部组成 一个PointCut 一个是advice
    - PointCut决定生不生代理类
-   - advice决定功能 advice分两类 一类是before/after/round 一类是Interceptor
-8. 
+   - advice决定功能 advice分两类 一类是before/after/round 一类是Interceptor  不过最终都是Interceptor
+8. ProxyTransactionManagementConfiguration就是创建事务Advisor的Bean的
+9. spring相关类
+   - Advisor类->BeanFactoryTransactionAttributeSourceAdvisor  
+   - PointCut->TransactionAttributeSourcePointcut  
+   - Advice->TransactionInterceptor 
+   - TransactionAttributeSource这个类重要方法是getTransactionAttribute() 在pointCut和Advice的invoke都会用到
