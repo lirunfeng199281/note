@@ -1,0 +1,18 @@
+##### ImportSelector和@Import
+
+##### AOP入口相关
+
+- AutoProxyRegistrar注册器 注册下面三个其中之一
+
+  ```java
+  static {
+     APC_PRIORITY_LIST.add(InfrastructureAdvisorAutoProxyCreator.class);
+     APC_PRIORITY_LIST.add(AspectJAwareAdvisorAutoProxyCreator.class);
+     APC_PRIORITY_LIST.add(AnnotationAwareAspectJAutoProxyCreator.class);
+  }
+  ```
+
+- AbstractAutoProxyCreator.postProcessAfterInitialization 后置 生成代理
+
+- AbstractAutoProxyCreator.**findEligibleAdvisors** 寻找需要生成Advisor
+
