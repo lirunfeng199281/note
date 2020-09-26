@@ -1,3 +1,5 @@
+### Transaction事务代理生成
+
 1. 不论是AutoConfiguration还是@EnableTransactionManagement入口最终都是@EnableTransactionManagement
 2. AOP实现有两种PROXY和ASPECTJ
    - PROXY CGLIB和JDK生成两种 运行时生成 简单
@@ -19,3 +21,5 @@
    - PointCut->TransactionAttributeSourcePointcut  
    - Advice->TransactionInterceptor 
    - TransactionAttributeSource这个类重要方法是getTransactionAttribute() 在pointCut和Advice的invoke都会用到
+
+### DataSourceTransactionManager流程
