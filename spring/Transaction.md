@@ -22,4 +22,19 @@
    - Advice->TransactionInterceptor 
    - TransactionAttributeSource这个类重要方法是getTransactionAttribute() 在pointCut和Advice的invoke都会用到
 
+### DataSourceTransactionManager事务传递测试
+
+1. REQUIRED(默认)
+   - case1 里报错 外try     整个回滚 因为事务已经标记成rollback only
+   - case2 里报错 外正常  整个回滚
+   - case3 里正常 外报错  整个回滚
+2. REQUIRES_NEW-里外事务不一样
+   - case1 里报错 外try     里面回滚 外面提交
+   - case2 里报错 外正常  整个回滚
+   - case3 里正常 外报错  里面提交 外面回滚
+3. NESTED-里外事务一样
+   - case1 里报错 外try     里面回滚 外面提交
+   - case2 里报错 外正常  整个回滚
+   - case3 里正常 外报错  整个回滚
+
 ### DataSourceTransactionManager流程
