@@ -36,5 +36,6 @@
    - case1 里报错 外try     里面回滚 外面提交
    - case2 里报错 外正常  整个回滚
    - case3 里正常 外报错  整个回滚
+   - case4 里正常 外try报错  整个回滚
 
 ### DataSourceTransactionManager流程
