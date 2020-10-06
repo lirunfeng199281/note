@@ -36,6 +36,8 @@
    - case1 里报错 外try     里面回滚 外面提交
    - case2 里报错 外正常  整个回滚
    - case3 里正常 外报错  整个回滚
-   - case4 里正常 外try报错  整个回滚
+4. 总结
+   1. rollback是切面上面设置的
+   2. NESTED在mysql上利用了savepoint特性 还是慎用
 
 ### DataSourceTransactionManager流程

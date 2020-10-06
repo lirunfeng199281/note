@@ -15,4 +15,4 @@
 
    2. spring 4.3之后，引入了一个新特性：当构造方法的参数为单个构造参数时，可以不使用@Autowired进行注解
 
-      
+2. LambdaSafe.callbacks
