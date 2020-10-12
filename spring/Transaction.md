@@ -41,3 +41,17 @@
    2. NESTED在mysql上利用了savepoint特性 还是慎用
 
 ### DataSourceTransactionManager流程
+
+### Mybatis和Spring开启事务流程
+
+1. AbstractPlatformTransactionManager.startTransaction 切面开启事务
+   1. startTransaction->DataSourceTransactionManager.doBegin
+      1. doBegin->txObject.getConnectionHolder().getConnection() 获取数据库连接
+      2. doBegin->TransactionSynchronizationManager.bindResource(a,b)) 把连接保存在resources(ThreadLocal) key是数据源
+   2. startTransaction->AbstractPlatformTransactionManager.prepareSynchronization 初始化synchronizations(ThreadLocal) 用于后面判断是否开启了事务
+2. SqlSessionTemplate.SqlSessionInterceptor.invoke() 
+3. SqlSessionUtils.getSqlSession 获取session
+   1. TransactionSynchronizationManager.getResource(sessionFactory) 从resources(ThreadLocal)获取mybatis's holder 然后再获取session key是mybatis's sessionFactory
+      1. 如果获取不到session 创建一个session和holder 然后放到resources(ThreadLocal)中
+      2. 如果获取得到就返回
+4. DataSourceUtils.doGetConnection 获取数据源对应的连接 有事务的从事务holder中获取 没有的从dataSource中get一个
