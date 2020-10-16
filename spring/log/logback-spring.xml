@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+
+    <springProperty scope="context" source="spring.application.name" name="appName" defaultValue="queen-web"/>
+    <springProperty scope="context" source="queen.common.file" name="commonFile" defaultValue="com/queen/common/log/logback-file.xml"/>
+    <property name="LOG_FILE" value="/logs/${appName}"/>
+    <property name="COMMON_FILE" value="${commonFile}"/>
+    <include resource="${COMMON_FILE}"/>
+
+    <root level="INFO">
+        <appender-ref ref="INFO" />
+        <appender-ref ref="ERROR" />
+        <appender-ref ref="CONSOLE" />
+    </root>
+
+</configuration>
