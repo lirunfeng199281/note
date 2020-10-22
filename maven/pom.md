@@ -50,3 +50,8 @@
   - <dependencies> 中的 <dependency> 子pom不能继承
   - <dependencyMannagement>中的<dependencies> 和parent一样
 
+#### <optional>和scope provided的理解
+
+- optional=true不会发生依赖传递
+- scope provided依赖需要外部提供
+- 用法上 可选的用optional 必须用到的用provided 见名思意
