@@ -55,3 +55,17 @@
       1. 如果获取不到session 创建一个session和holder 然后放到resources(ThreadLocal)中
       2. 如果获取得到就返回
 4. DataSourceUtils.doGetConnection 获取数据源对应的连接 有事务的从事务holder中获取 没有的从dataSource中get一个
+
+### 多线程下编程式事务管理
+
+1. transactionManager.getTransaction(def) 手动开启事务 返回对象DefaultTransactionStatus
+2. DefaultTransactionStatus里面包含了本次事务用到的数据库连接
+3. 情景
+   1. Main线程开启AB两个线程 AB线程开启事务 并且DefaultTransactionStatus 保存到Main线程
+   2. 执行后 Main线程commit AB线程的DefaultTransactionStatus
+4. 针对情景3 有下面的分析
+   1. AB的数据是可以提交的 因为DefaultTransactionStatus包含了数据库conn conn.commit不受影响
+   2. 假设A线程执行sql后报错 那么上面的情景数据还是会被提交的 因为没有把rollback信息写到DefaultTransactionStatus
+   3. 即使正常使用的情况下 假如报错没有经过切面 其实也是可以提交成功 一样的道理
+   4. Main线程下 A事务commit后 B其实commit不到的 Main线程commit也是失败的 因为commit后会clean掉执行commit的线程的ThreadLocal变量
+   5. 这些ThreadLocal是aop上面控制事务情况的 如果AB线程开启事务 但是却在Main线程提交 会造成DefaultTransactionStatus和ThreadLocal变量不一致 从而引发各种奇怪问题
