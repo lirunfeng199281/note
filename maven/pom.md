@@ -55,3 +55,7 @@
 - optional=true不会发生依赖传递
 - scope provided依赖需要外部提供
 - 用法上 可选的用optional 必须用到的用provided 见名思意
+
+#### <artifactId>spring-boot-starter-test</artifactId>
+
+​	junit的引入要<scope>test</scope> 可以节省12MB
